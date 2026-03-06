@@ -18,9 +18,10 @@ jobs:
           npm install
           npm run build
 
-      - name: Send success notification
+      - name: Send success notification (custom bot)
         uses: feishu-bot-action@1.0.0
         with:
+          bot-type: custom
           webhook-url: ${{ webhook_url }}
           message: "✅ 构建成功！项目已构建完成，分支: main"
 
@@ -31,10 +32,13 @@ jobs:
       - name: Deploy to production
         run: |
           echo "Deploying to production..."
-          # 部署逻辑
 
-      - name: Send deployment notification
+      - name: Send deployment notification (app bot)
         uses: feishu-bot-action@1.0.0
         with:
-          webhook-url: ${{ webhook_url }}
+          bot-type: app
+          app-id: ${{ app_id }}
+          app-secret: ${{ app_secret }}
+          receive-type: chat_id
+          receive-id: ${{ chat_id }}
           message: "🚀 部署成功！项目已部署到生产环境"

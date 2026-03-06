@@ -24,9 +24,10 @@ jobs:
           echo "test_result=success" >> $GITHUB_OUTPUT
         continue-on-error: true
 
-      - name: Notify test result
+      - name: Notify test result (custom bot)
         uses: feishu-bot-action@1.0.0
         with:
+          bot-type: custom
           webhook-url: ${{ webhook_url }}
           message: |
             📋 测试报告
@@ -46,16 +47,29 @@ jobs:
           npm install
           npm run build
 
-      - name: Send build notification
+      - name: Send build notification (app bot - rich text)
         uses: feishu-bot-action@1.0.0
         with:
-          webhook-url: ${{ webhook_url }}
+          bot-type: app
+          app-id: ${{ app_id }}
+          app-secret: ${{ app_secret }}
+          receive-type: chat_id
+          receive-id: ${{ chat_id }}
+          msg-type: post
           message: |
-            🔨 构建完成
-            项目: ${{ github.repository }}
-            分支: ${{ github.ref_name }}
-            提交: ${{ github.sha }}
-            触发者: ${{ github.actor }}
+            {
+              "post": {
+                "zh_cn": {
+                  "title": "🔨 构建完成",
+                  "content": [
+                    [{"tag": "text", "text": "项目: "}, {"tag": "text", "text": "${{ github.repository }}"}],
+                    [{"tag": "text", "text": "分支: "}, {"tag": "text", "text": "${{ github.ref_name }}"}],
+                    [{"tag": "text", "text": "提交: "}, {"tag": "text", "text": "${{ github.sha }}"}],
+                    [{"tag": "text", "text": "触发者: "}, {"tag": "text", "text": "${{ github.actor }}"}]
+                  ]
+                }
+              }
+            }
 
   deploy:
     needs: build
@@ -66,9 +80,10 @@ jobs:
         run: |
           echo "Deploying to production..."
 
-      - name: Send deployment success notification
+      - name: Send deployment success notification (custom bot)
         uses: feishu-bot-action@1.0.0
         with:
+          bot-type: custom
           webhook-url: ${{ webhook_url }}
           message: |
             🎉 部署成功！
@@ -76,12 +91,13 @@ jobs:
             环境: 生产环境
             版本: ${{ github.sha }}
             部署者: ${{ github.actor }}
-            时间: ${{ github.event.head_commit.timestamp }}
 
-      - name: Check deployment result
-        run: |
-          if [ "${{ steps.notify.outputs.ok }}" == "true" ]; then
-            echo "Notification sent successfully"
-          else
-            echo "Notification failed"
-          fi
+      - name: Send private notification (app bot)
+        uses: feishu-bot-action@1.0.0
+        with:
+          bot-type: app
+          app-id: ${{ app_id }}
+          app-secret: ${{ app_secret }}
+          receive-type: open_id
+          receive-id: ${{ user_open_id }}
+          message: "您的部署任务已完成！"
