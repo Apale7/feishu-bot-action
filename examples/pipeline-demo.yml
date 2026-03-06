@@ -1,0 +1,40 @@
+name: Build and Deploy Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build project
+        run: |
+          echo "Building project..."
+          npm install
+          npm run build
+
+      - name: Send success notification
+        uses: feishu-bot-action@1.0.0
+        with:
+          webhook-url: ${{ webhook_url }}
+          message: "✅ 构建成功！项目已构建完成，分支: main"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to production
+        run: |
+          echo "Deploying to production..."
+          # 部署逻辑
+
+      - name: Send deployment notification
+        uses: feishu-bot-action@1.0.0
+        with:
+          webhook-url: ${{ webhook_url }}
+          message: "🚀 部署成功！项目已部署到生产环境"

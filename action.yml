@@ -1,0 +1,22 @@
+name: 'feishu-bot'
+version: '1.0.0'
+author: 'feishu-bot'
+description: 'Send notifications to Feishu bot from CodeArts pipeline'
+
+inputs:
+  webhook-url:
+    description: 'Feishu bot webhook URL'
+    required: true
+    default: ${{ webhook_url }}
+  message:
+    description: 'Message to send'
+    required: true
+
+outputs:
+  ok:
+    description: 'Whether the message was sent successfully'
+    type: boolean
+
+runs:
+  using: 'node16'
+  main: 'src/main.js'

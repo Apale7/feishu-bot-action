@@ -1,0 +1,87 @@
+name: CI/CD Pipeline with Feishu Notifications
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run tests
+        id: test
+        run: |
+          echo "Running tests..."
+          npm test
+          echo "test_result=success" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Notify test result
+        uses: feishu-bot-action@1.0.0
+        with:
+          webhook-url: ${{ webhook_url }}
+          message: |
+            📋 测试报告
+            分支: ${{ github.ref_name }}
+            提交者: ${{ github.actor }}
+            测试结果: ${{ steps.test.outputs.test_result == 'success' && '✅ 通过' || '❌ 失败' }}
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build project
+        run: |
+          npm install
+          npm run build
+
+      - name: Send build notification
+        uses: feishu-bot-action@1.0.0
+        with:
+          webhook-url: ${{ webhook_url }}
+          message: |
+            🔨 构建完成
+            项目: ${{ github.repository }}
+            分支: ${{ github.ref_name }}
+            提交: ${{ github.sha }}
+            触发者: ${{ github.actor }}
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy to production
+        run: |
+          echo "Deploying to production..."
+
+      - name: Send deployment success notification
+        uses: feishu-bot-action@1.0.0
+        with:
+          webhook-url: ${{ webhook_url }}
+          message: |
+            🎉 部署成功！
+            项目: ${{ github.repository }}
+            环境: 生产环境
+            版本: ${{ github.sha }}
+            部署者: ${{ github.actor }}
+            时间: ${{ github.event.head_commit.timestamp }}
+
+      - name: Check deployment result
+        run: |
+          if [ "${{ steps.notify.outputs.ok }}" == "true" ]; then
+            echo "Notification sent successfully"
+          else
+            echo "Notification failed"
+          fi
