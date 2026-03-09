@@ -1,10 +1,17 @@
-const { httpRequest, buildOptions } = require('../utils/http');
-const { getTenantAccessToken } = require('../auth/token');
-const { buildMessageContent } = require('./custom-bot');
+import { httpRequest, buildOptions } from '../utils/http';
+import { getTenantAccessToken } from '../auth/token';
+import { buildMessageContent, MessageType } from './custom-bot';
 
 const MESSAGE_URL = 'https://open.feishu.cn/open-apis/im/v1/messages';
 
-async function sendAppBotMessage(appId, appSecret, receiveType, receiveId, msgType, message) {
+export async function sendAppBotMessage(
+  appId: string,
+  appSecret: string,
+  receiveType: string,
+  receiveId: string,
+  msgType: MessageType,
+  message: string
+): Promise<boolean> {
   if (!appId) {
     throw new Error('自建应用机器人需要 app-id 参数');
   }
@@ -49,7 +56,3 @@ async function sendAppBotMessage(appId, appSecret, receiveType, receiveId, msgTy
 
   throw new Error(`飞书 API 错误: ${response.body.msg || JSON.stringify(response.body)}`);
 }
-
-module.exports = {
-  sendAppBotMessage
-};

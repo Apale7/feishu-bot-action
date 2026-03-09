@@ -1,7 +1,13 @@
-const core = require('@actions/core');
-const { sendMessage, BOT_TYPE_CUSTOM, BOT_TYPE_APP } = require('./bots');
+import * as core from '@actions/core';
+import { sendMessage, BOT_TYPE_CUSTOM, BOT_TYPE_APP, BotType } from './bots';
 
-function validateInputs(botType, webhookUrl, appId, appSecret, receiveId) {
+export function validateInputs(
+  botType: string,
+  webhookUrl: string,
+  appId: string,
+  appSecret: string,
+  receiveId: string
+): void {
   if (botType === BOT_TYPE_CUSTOM) {
     if (!webhookUrl) {
       throw new Error('当 bot-type 为 "custom" 时，webhook-url 是必需的');
@@ -25,7 +31,7 @@ function validateInputs(botType, webhookUrl, appId, appSecret, receiveId) {
   throw new Error(`不支持的机器人类型: ${botType}。支持的类型: custom, app`);
 }
 
-async function run() {
+export async function run(): Promise<void> {
   try {
     const botType = core.getInput('bot-type', { required: true });
     const webhookUrl = core.getInput('webhook-url');
@@ -58,11 +64,9 @@ async function run() {
   } catch (error) {
     console.error('错误详情:', error);
     core.setOutput('ok', false);
-    core.setFailed(error.message);
+    core.setFailed((error as Error).message);
   }
 }
-
-module.exports = { run, validateInputs };
 
 if (require.main === module) {
   run();

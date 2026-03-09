@@ -1,22 +1,21 @@
-const core = require('@actions/core');
+import * as core from '@actions/core';
+import { httpRequest, buildOptions } from './src/utils/http';
+import { sendCustomBotMessage, buildMessageContent } from './src/bots/custom-bot';
+import { sendAppBotMessage } from './src/bots/app-bot';
+import { sendMessage } from './src/bots/index';
+import { validateInputs } from './src/main';
 
 jest.mock('@actions/core');
 jest.mock('./src/utils/http', () => ({
   httpRequest: jest.fn(),
-  buildOptions: jest.fn((url, method, headers, body) => ({
+  buildOptions: jest.fn((url: string, method: string, headers?: Record<string, string | number>, body?: string) => ({
     hostname: new URL(url).hostname,
     port: 443,
     path: new URL(url).pathname + new URL(url).search,
     method,
-    headers
+    headers: headers || {}
   }))
 }));
-
-const { httpRequest } = require('./src/utils/http');
-const { sendCustomBotMessage, buildMessageContent } = require('./src/bots/custom-bot');
-const { sendAppBotMessage } = require('./src/bots/app-bot');
-const { sendMessage } = require('./src/bots/index');
-const { validateInputs } = require('./src/main');
 
 describe('飞书机器人插件', () => {
   beforeEach(() => {
@@ -72,7 +71,7 @@ describe('飞书机器人插件', () => {
 
   describe('自定义机器人发送', () => {
     test('发送消息成功', async () => {
-      httpRequest.mockResolvedValue({
+      (httpRequest as jest.Mock).mockResolvedValue({
         statusCode: 200,
         body: { code: 0, msg: 'success' }
       });
@@ -92,7 +91,7 @@ describe('飞书机器人插件', () => {
 
   describe('自建应用机器人发送', () => {
     test('发送消息成功', async () => {
-      httpRequest
+      (httpRequest as jest.Mock)
         .mockResolvedValueOnce({
           statusCode: 200,
           body: { code: 0, tenant_access_token: 'test-token', expire: 7200 }
@@ -121,8 +120,7 @@ describe('飞书机器人插件', () => {
 
   describe('消息发送工厂', () => {
     test('bot-type=custom 时调用自定义机器人', async () => {
-      const mockHttp = require('./src/utils/http');
-      mockHttp.httpRequest.mockResolvedValue({
+      (httpRequest as jest.Mock).mockResolvedValue({
         statusCode: 200,
         body: { code: 0 }
       });
@@ -134,7 +132,7 @@ describe('飞书机器人插件', () => {
         message: 'test'
       });
 
-      expect(mockHttp.httpRequest).toHaveBeenCalled();
+      expect(httpRequest).toHaveBeenCalled();
     });
 
     test('不支持的机器人类型时抛出错误', async () => {

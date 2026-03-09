@@ -1,20 +1,30 @@
-const { httpRequest, buildOptions } = require('../utils/http');
+import { httpRequest, buildOptions } from '../utils/http';
 
-function buildMessageContent(msgType, message) {
+export type MessageType = 'text' | 'post' | 'interactive' | 'image' | string;
+
+export interface MessageContent {
+  [key: string]: any;
+}
+
+export function buildMessageContent(msgType: MessageType, message: string): MessageContent {
   if (msgType === 'text') {
     return {
       text: message
     };
   }
-  
+
   try {
     return JSON.parse(message);
   } catch (e) {
-    throw new Error(`解析消息 JSON 失败 (msg_type="${msgType}"): ${e.message}`);
+    throw new Error(`解析消息 JSON 失败 (msg_type="${msgType}"): ${(e as Error).message}`);
   }
 }
 
-async function sendCustomBotMessage(webhookUrl, msgType, message) {
+export async function sendCustomBotMessage(
+  webhookUrl: string,
+  msgType: MessageType,
+  message: string
+): Promise<boolean> {
   if (!webhookUrl) {
     throw new Error('自定义机器人需要 webhook-url 参数');
   }
@@ -44,8 +54,3 @@ async function sendCustomBotMessage(webhookUrl, msgType, message) {
 
   throw new Error(`飞书 API 错误: ${response.body.msg || response.body.message || JSON.stringify(response.body)}`);
 }
-
-module.exports = {
-  sendCustomBotMessage,
-  buildMessageContent
-};

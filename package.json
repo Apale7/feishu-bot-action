@@ -2,16 +2,17 @@
   "name": "feishu-bot-action",
   "version": "1.0.0",
   "description": "Feishu bot notification action for CodeArts pipeline",
-  "main": "src/main.js",
+  "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
-    "package": "ncc build src/main.js -o dist",
+    "package": "ncc build lib/main.js -o dist",
     "zip": "zip -r feishu-bot-action.zip dist action.yml README.md",
     "test": "jest",
-    "test:real": "node test-real.js",
+    "test:real": "ts-node test-real.ts",
+    "test:card": "ts-node test-card.ts",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "all": "npm run package && npm run zip"
+    "all": "npm run build && npm run package && npm run zip"
   },
   "dependencies": {
     "@actions/core": "^1.10.0"
@@ -22,6 +23,8 @@
     "@vercel/ncc": "^0.38.0",
     "dotenv": "^17.3.1",
     "jest": "^30.2.0",
+    "ts-jest": "^29.0.0",
+    "ts-node": "^10.9.0",
     "typescript": "^5.0.0"
   }
 }

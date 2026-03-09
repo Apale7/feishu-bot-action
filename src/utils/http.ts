@@ -1,6 +1,21 @@
-const https = require('https');
+import * as https from 'https';
+import * as http from 'http';
 
-function httpRequest(options, body) {
+export interface HttpResponse {
+  statusCode: number;
+  headers: http.IncomingHttpHeaders;
+  body: any;
+}
+
+export interface RequestOptions {
+  hostname: string;
+  port: number;
+  path: string;
+  method: string;
+  headers: Record<string, string | number>;
+}
+
+export function httpRequest(options: RequestOptions, body?: string): Promise<HttpResponse> {
   return new Promise((resolve, reject) => {
     const req = https.request(options, (res) => {
       let data = '';
@@ -12,7 +27,7 @@ function httpRequest(options, body) {
       res.on('end', () => {
         try {
           const response = JSON.parse(data);
-          resolve({ statusCode: res.statusCode, headers: res.headers, body: response });
+          resolve({ statusCode: res.statusCode || 0, headers: res.headers, body: response });
         } catch (e) {
           reject(new Error(`解析响应失败: ${data}`));
         }
@@ -31,11 +46,16 @@ function httpRequest(options, body) {
   });
 }
 
-function buildOptions(url, method, headers, body) {
+export function buildOptions(
+  url: string,
+  method: string,
+  headers?: Record<string, string | number>,
+  body?: string
+): RequestOptions {
   const parsedUrl = new URL(url);
-  const options = {
+  const options: RequestOptions = {
     hostname: parsedUrl.hostname,
-    port: parsedUrl.port || 443,
+    port: parseInt(parsedUrl.port) || 443,
     path: parsedUrl.pathname + parsedUrl.search,
     method: method,
     headers: headers || {}
@@ -47,8 +67,3 @@ function buildOptions(url, method, headers, body) {
 
   return options;
 }
-
-module.exports = {
-  httpRequest,
-  buildOptions
-};
