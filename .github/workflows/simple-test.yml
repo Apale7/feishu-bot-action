@@ -1,0 +1,36 @@
+name: Simple Test (Act)
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  workflow_dispatch:
+
+jobs:
+  test-simple:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: |
+          npm run build
+          npm run package
+
+      - name: Test custom bot
+        uses: ./
+        env:
+          FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+        with:
+          bot-type: custom
+          webhook-url: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          msg-type: text
+          message: '🧪 Act 本地测试成功'

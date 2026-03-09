@@ -35,10 +35,12 @@ export async function sendCustomBotMessage(
 
   const content = buildMessageContent(msgType, message);
 
-  const body = JSON.stringify({
-    msg_type: msgType,
-    content: content
-  });
+  // 卡片消息使用 "card" 字段，其他消息类型使用 "content" 字段
+  const body = JSON.stringify(
+    msgType === 'interactive'
+      ? { msg_type: msgType, card: content }
+      : { msg_type: msgType, content: content }
+  );
 
   const options = buildOptions(webhookUrl, 'POST', {
     'Content-Type': 'application/json'

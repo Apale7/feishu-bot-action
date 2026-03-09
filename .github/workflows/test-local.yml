@@ -1,0 +1,143 @@
+name: Test Feishu Bot Action (Local)
+
+on:
+  push:
+    branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Test message to send'
+        required: false
+        default: '🧪 本地测试消息 - 来自 act 工具'
+
+jobs:
+  test-custom-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build action
+        run: |
+          npm install
+          npm run build
+          npm run package
+
+      - name: Send notification via custom bot
+        uses: ./
+        with:
+          bot-type: custom
+          webhook-url: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          msg-type: text
+          message: ${{ github.event.inputs.message || '✅ 本地测试成功 - 自定义机器人' }}
+
+  test-app-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build action
+        run: |
+          npm install
+          npm run build
+          npm run package
+
+      - name: Send notification via app bot
+        uses: ./
+        with:
+          bot-type: app
+          app-id: ${{ secrets.FEISHU_APP_ID }}
+          app-secret: ${{ secrets.FEISHU_APP_SECRET }}
+          receive-type: open_id
+          receive-id: ${{ secrets.FEISHU_RECEIVE_ID }}
+          msg-type: text
+          message: ${{ github.event.inputs.message || '✅ 本地测试成功 - 应用机器人' }}
+
+  test-rich-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build action
+        run: |
+          npm install
+          npm run build
+          npm run package
+
+      - name: Send rich text notification
+        uses: ./
+        with:
+          bot-type: custom
+          webhook-url: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          msg-type: post
+          message: |
+            {
+              "post": {
+                "zh_cn": {
+                  "title": "🚀 本地测试通知",
+                  "content": [
+                    [
+                      {"tag": "text", "text": "测试状态: "},
+                      {"tag": "text", "text": "✅ 成功"}
+                    ],
+                    [
+                      {"tag": "text", "text": "测试时间: "},
+                      {"tag": "text", "text": "${{ github.event.head_commit.timestamp || 'N/A' }}"}
+                    ],
+                    [
+                      {"tag": "a", "text": "查看详情", "href": "https://github.com/${{ github.repository }}"}
+                    ]
+                  ]
+                }
+              }
+            }
+
+  test-card-message:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build action
+        run: |
+          npm install
+          npm run build
+          npm run package
+
+      - name: Send card notification
+        uses: ./
+        with:
+          bot-type: custom
+          webhook-url: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          msg-type: interactive
+          message: |
+            {
+              "config": {
+                "wide_screen_mode": true
+              },
+              "elements": [
+                {
+                  "tag": "div",
+                  "text": {
+                    "content": "**本地测试成功**\n测试环境: act\n测试时间: ${{ github.event.head_commit.timestamp || 'N/A' }}",
+                    "tag": "lark_md"
+                  }
+                },
+                {
+                  "tag": "action",
+                  "actions": [
+                    {
+                      "tag": "button",
+                      "text": {
+                        "content": "查看仓库",
+                        "tag": "plain_text"
+                      },
+                      "type": "primary",
+                      "url": "https://github.com/${{ github.repository }}"
+                    }
+                  ]
+                }
+              ]
+            }

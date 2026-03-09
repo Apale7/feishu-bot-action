@@ -1,0 +1,56 @@
+name: Quick Test (No Build)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-custom:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build if needed
+        run: |
+          if [ ! -f "dist/index.js" ]; then
+            echo "dist/index.js not found, building..."
+            npm install
+            npm run build
+            npm run package
+          else
+            echo "dist/index.js exists, skipping build"
+          fi
+
+      - name: Send notification via custom bot
+        uses: ./
+        with:
+          bot-type: custom
+          webhook-url: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          msg-type: text
+          message: '⚡ 快速测试 - 跳过 build'
+
+  test-card:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Send card notification
+        uses: ./
+        with:
+          bot-type: custom
+          webhook-url: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          msg-type: interactive
+          message: |
+            {
+              "config": { "wide_screen_mode": true },
+              "elements": [
+                {
+                  "tag": "div",
+                  "text": {
+                    "content": "**⚡ 快速测试成功**",
+                    "tag": "lark_md"
+                  }
+                }
+              ]
+            }

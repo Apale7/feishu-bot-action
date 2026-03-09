@@ -1,0 +1,22 @@
+# Act 配置文件 - 简化版（修复 secrets 加载问题）
+
+# 使用 Docker 镜像
+-P ubuntu-latest=node:16-buster-slim
+
+# 容器配置
+--container-architecture linux/amd64
+
+# 默认工作流
+-W .github/workflows
+
+# Secrets 文件（移除注释避免解析问题）
+--secret-file .secrets
+
+# 环境变量文件
+--env-file .env
+
+# 详细输出
+--verbose
+
+# 自动下载缺失的 actions
+--pull true

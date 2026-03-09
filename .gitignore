@@ -3,3 +3,6 @@ dist/
 *.zip
 .env
 coverage/
+# Act local testing
+.secrets
+.secrets.local

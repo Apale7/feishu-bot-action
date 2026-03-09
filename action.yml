@@ -12,7 +12,6 @@ inputs:
   webhook-url:
     description: '自定义机器人 Webhook URL (bot-type=custom 时需要，通过隐私变量注入)'
     required: false
-    default: ${{ webhook_url }}
   
   app-id:
     description: '飞书应用 ID (bot-type=app 时需要)'
@@ -20,7 +19,6 @@ inputs:
   app-secret:
     description: '飞书应用 Secret (bot-type=app 时需要，通过隐私变量注入)'
     required: false
-    default: ${{ app_secret }}
   receive-type:
     description: '接收者 ID 类型: chat_id, open_id, user_id, union_id (bot-type=app 时需要)'
     required: false
@@ -40,7 +38,6 @@ inputs:
 outputs:
   ok:
     description: '消息是否发送成功'
-    type: boolean
 
 runs:
   using: 'node16'
