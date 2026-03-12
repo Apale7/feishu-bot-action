@@ -19,7 +19,7 @@ jobs:
           npm run build
 
       - name: Send success notification (custom bot)
-        uses: feishu-bot-action@1.0.0
+        uses: feishu-bot@1.0.0
         with:
           bot-type: custom
           webhook-url: ${{ webhook_url }}
@@ -34,7 +34,7 @@ jobs:
           echo "Deploying to production..."
 
       - name: Send deployment notification (app bot)
-        uses: feishu-bot-action@1.0.0
+        uses: feishu-bot@1.0.0
         with:
           bot-type: app
           app-id: ${{ app_id }}

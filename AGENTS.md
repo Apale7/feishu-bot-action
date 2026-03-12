@@ -1,5 +1,9 @@
 # AGENTS.md
 
+## 交互要求
+- Thinking 思考过程可以隐藏或用中文表述
+- Reply 回答也要用中文回复
+
 这个项目的目的是开发一个华为云codearts pipeline上的自定义插件，支持在pipeline中调用飞书群自定义机器人发送文本通知
 
 # CodeArts Actions类型插件开发文档

@@ -1,12 +1,12 @@
 {
-  "name": "feishu-bot-action",
+  "name": "feishu-bot",
   "version": "1.0.0",
   "description": "Feishu bot notification action for CodeArts pipeline",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
     "package": "ncc build lib/main.js -o dist",
-    "zip": "zip -r feishu-bot-action.zip dist action.yml README.md",
+    "zip": "zip -r feishu-bot.zip dist action.yml README.md",
     "test": "jest",
     "test:real": "ts-node test-real.ts",
     "test:card": "ts-node test-card.ts",

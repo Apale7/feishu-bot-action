@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Send Pipeline Card (App Bot)
-        uses: feishu-bot-action@1.0.0
+        uses: feishu-bot@1.0.0
         with:
           bot-type: app
           app-id: ${{ app_id }}
@@ -87,7 +87,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Send Rich Text Message (App Bot)
-        uses: feishu-bot-action@1.0.0
+        uses: feishu-bot@1.0.0
         with:
           bot-type: app
           app-id: ${{ app_id }}
@@ -153,7 +153,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Send Success Card (App Bot)
-        uses: feishu-bot-action@1.0.0
+        uses: feishu-bot@1.0.0
         with:
           bot-type: app
           app-id: ${{ app_id }}
@@ -204,7 +204,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Send Simple Card (Custom Bot)
-        uses: feishu-bot-action@1.0.0
+        uses: feishu-bot@1.0.0
         with:
           bot-type: custom
           webhook-url: ${{ webhook_url }}
@@ -239,7 +239,7 @@ jobs:
           echo "build_status=success" >> $GITHUB_OUTPUT
       
       - name: Send Pipeline Notification (Dynamic Card)
-        uses: feishu-bot-action@1.0.0
+        uses: feishu-bot@1.0.0
         with:
           bot-type: app
           app-id: ${{ app_id }}

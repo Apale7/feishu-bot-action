@@ -6,3 +6,4 @@ coverage/
 # Act local testing
 .secrets
 .secrets.local
+design_doc

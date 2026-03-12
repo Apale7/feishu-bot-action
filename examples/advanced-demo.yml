@@ -25,7 +25,7 @@ jobs:
         continue-on-error: true
 
       - name: Notify test result (custom bot)
-        uses: feishu-bot-action@1.0.0
+        uses: feishu-bot@1.0.0
         with:
           bot-type: custom
           webhook-url: ${{ webhook_url }}
@@ -48,7 +48,7 @@ jobs:
           npm run build
 
       - name: Send build notification (app bot - rich text)
-        uses: feishu-bot-action@1.0.0
+        uses: feishu-bot@1.0.0
         with:
           bot-type: app
           app-id: ${{ app_id }}
@@ -81,7 +81,7 @@ jobs:
           echo "Deploying to production..."
 
       - name: Send deployment success notification (custom bot)
-        uses: feishu-bot-action@1.0.0
+        uses: feishu-bot@1.0.0
         with:
           bot-type: custom
           webhook-url: ${{ webhook_url }}
@@ -93,7 +93,7 @@ jobs:
             部署者: ${{ github.actor }}
 
       - name: Send private notification (app bot)
-        uses: feishu-bot-action@1.0.0
+        uses: feishu-bot@1.0.0
         with:
           bot-type: app
           app-id: ${{ app_id }}
