@@ -43,3 +43,4 @@ runs:
   using: 'node16'
   main: 'dist/index.js'
   post: 'dist/stop.js'
+  post-if: 'always()'
