@@ -5,7 +5,9 @@
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
-    "package": "ncc build lib/main.js -o dist",
+    "package": "npm run package-main && npm run package-stop",
+    "package-main": "ncc build lib/main.js -o dist",
+    "package-stop": "ncc build lib/stop.js -o dist/stop && mv dist/stop/index.js dist/stop.js && rm -rf dist/stop",
     "zip": "zip -r feishu-bot.zip dist action.yml README.md",
     "test": "jest",
     "test:real": "ts-node test-real.ts",

@@ -7,3 +7,4 @@ coverage/
 .secrets
 .secrets.local
 design_doc
+lib
